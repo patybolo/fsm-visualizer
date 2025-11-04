@@ -37,10 +37,9 @@ int main(int argc, char *argv[])
 
         if(buttons == 4 && !ready_draw) {
             start_pix = pix;
-            elapsed_time = tigrTime();
             ready_draw = true;
         }
-        else if(buttons == 4 && ready_draw && tigrTime() >= elapsed_time + 0.01f) {
+        else if(buttons == 4 && ready_draw) {
             end_pix = pix;
             tigrLine(screen, start_pix.x,start_pix.y, end_pix.x, end_pix.y, defPix);
             ready_draw = false;
