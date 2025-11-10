@@ -2102,6 +2102,25 @@ void tigrWinUpdateWidgets(Tigr* bmp, int dw, int dh) {
         SendMessage((HWND)bmp->handle, WM_CLOSE, 0, 0);
 }
 
+void d_fast_tigrUpdate(Tigr *bmp, int dw, int dh) {
+    TigrInternal* win = tigrInternal(bmp);
+    if (!win->shown) {
+        win->shown = 1;
+        UpdateWindow((HWND)bmp->handle);
+        ShowWindow((HWND)bmp->handle, SW_SHOW);
+    }
+
+    // Update the widget overlay.
+    tigrWinUpdateWidgets(bmp, dw, dh);
+
+    if (!tigrGAPIBegin(bmp)) {
+        tigrGAPIPresent(bmp, dw, dh);
+        SwapBuffers(win->gl.dc);
+        tigrGAPIEnd(bmp);
+    }
+}
+
+
 void tigrUpdate(Tigr* bmp) {
     MSG msg;
     RECT rc;
@@ -2450,7 +2469,9 @@ Tigr* tigrWindow(int w, int h, const char* title, int flags) {
 
     wglSwapIntervalEXT_ = (PFNWGLSWAPINTERVALFARPROC_)wglGetProcAddress("wglSwapIntervalEXT");
     if (wglSwapIntervalEXT_)
-        wglSwapIntervalEXT_(1);
+    //  wglSwapIntervalEXT_(1);
+    //  DARU:
+        wglSwapIntervalEXT_(0);
 
     return bmp;
 }
